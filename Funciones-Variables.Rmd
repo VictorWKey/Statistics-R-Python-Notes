@@ -1,0 +1,30 @@
+---
+title: "Funciones y variables"
+author: "Victor Lopez"
+date: "2023-01-11"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r, eval = FALSE}
+# FUNCIONES
+
+suma5 <- function(numero){
+  numero = suma1(numero);
+  numero = suma1(numero);
+  numero = suma1(numero);
+  numero = suma1(numero);
+  suma1(numero) t + 1 # Lo ultimo es como un return
+}
+
+## Vector de las variables que hemos creado
+ls() 
+
+## Eliminar una variable
+rm(product) 
+
+## Eliminar una lista de variables que es pasada como vector
+rm(list = ls()) 
+```
+

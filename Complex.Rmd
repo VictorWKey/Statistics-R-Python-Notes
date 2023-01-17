@@ -1,0 +1,48 @@
+---
+title: "Numeros complejos"
+author: "Victor Lopez"
+date: "2023-01-11"
+output: pdf_document
+---
+
+```{r, eval = FALSE}
+# NUMEROS COMPLEJOS
+
+## Devuelve el tipo de dato
+class(3+2i) 
+
+## complejo
+complex(real = pi, imaginary = sqrt(2)) -> z1
+
+## raiz de un negativo
+sqrt(as.complex(-5)) # Raiz cuadrada de un numero negativo
+
+## raiz
+sqrt(3+2i) # z^2 = 3+2i
+
+## logaritmo neperiano
+exp(3+2i)
+
+## sin
+sin(3+2i)
+
+## cos
+cos(3+2i)
+
+## Módulo
+Mod(z1)
+
+## Argumento
+Arg(-1+0i)
+
+## Conjugado
+Conj(z1)
+
+## Parte Real y Parte Imaginaria
+Re(z1)
+Im(z1)
+
+## Numero complejo a partir del modulo y argumento
+complex(modulus = 2, argument = pi/2) -> z2
+```
+

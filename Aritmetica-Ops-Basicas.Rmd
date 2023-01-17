@@ -1,0 +1,86 @@
+---
+title: "Aritmetica y operaciones basicas"
+author: "Victor Lopez"
+date: "2023-01-11"
+output: pdf_document
+---
+
+.
+```{r, eval = FALSE}
+# ARITMETICA
+
+## Division entera
+2 %/% 3
+
+## Modulo
+2 %% 3
+
+## Potencia
+2^3
+
+## pi
+pi
+
+##
+Inf
+
+##
+NA
+
+##
+NaN
+
+## raiz
+sqrt(25)
+
+## nep potencia
+exp(1)
+
+## log nep
+log(13)
+
+## log y base
+log(32, base = 2)
+
+## absoluto
+abs(-4)
+
+## factorial
+factorial(7)
+
+## (n k)
+choose(5, 3)
+
+## sin
+sin(60*pi/180)
+
+## cos
+cos(60*pi/180)
+
+## sin(pi/2)
+sinpi(1/2) 
+
+## tan
+tan(pi) 
+
+## asin
+asin(0.8660254) 
+
+## acos
+acos(-8)
+
+## Imprimir cantidad de numeros significantes
+print(sqrt(2),10)
+
+## round
+round(sqrt(2), 3)
+
+## floor
+floor(sqrt(2))
+
+## ceil
+ceiling(sqrt(2))
+
+## trunc
+trunc(sqrt(2))
+```

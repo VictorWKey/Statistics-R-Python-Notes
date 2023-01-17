@@ -1,0 +1,38 @@
+---
+title: "Paquetes"
+author: "Victor Lopez"
+date: "2023-01-11"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Documentacion
+```{r, eval = FALSE}
+## Ver documentacion de una funcion
+help(lm) 
+
+```
+
+## Paquetes
+
+```{r, eval = FALSE}
+## Instalamos paquete y sus dependencias en R
+install.packages("magic", dep = TRUE )
+```
+
+
+```{r, eval = FALSE}
+## Cargar para utilizar un paquete
+library("magic")
+```
+
+
+```{r, eval = FALSE}
+## Ver paquetes instalados
+
+installed.packages()
+```
+
