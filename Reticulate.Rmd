@@ -1,0 +1,107 @@
+---
+title: "Reticulate"
+author: "Victor Lopez"
+date: "2023-01-11"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Reticulate
+
+* Los vectores de R se convierten a listas de Python 
+* Las listas de R se convierten a tuplas de Python
+* Las name list de R se convierten a diccionarios de Python 
+* Matrices o arrays de R se convierten a numpy de Python 
+* Los df de R son df de Python
+* Los factores se convierten a variables categoricas 
+* Lo demas se conserva 
+
+```{r}
+library(reticulate)
+# use_python("/Users/VICTORWKEY/anaconda3/python.exe", required = TRUE)
+np = import("numpy", convert = FALSE)
+x = np$array(c(1, 2, 3))
+sum = x$cumsum()
+
+# En este caso lo va imprimir como array de numpy debido a que usamos convert = FALSE
+sum
+
+# Convertimos de objeto Python a R
+py_to_r(sum)
+
+```
+
+# Cargar funciones de un .py
+
+```{r}
+# source_python("sum.py")
+# add(4, 6)
+```
+
+# Ayuda de Python en R
+
+```{r}
+# Python
+py_help(np$abs) 
+```
+
+# Mas metodos de Reticulate
+
+```{r}
+a = np_array(c(1:10), dtype = "float16")
+a
+```
+
+# R y Python combinados
+
+```{r}
+# CODIGO DE R
+dataframe = iris
+head(dataframe)
+
+dataframe_py = r_to_py(dataframe)
+```
+
+```{python}
+# CODIGO DE PYTHON
+import numpy as np
+import pandas as pd
+
+r.dataframe_py.head() # Accedemos a las variables que hayamos transformado en R
+```
+
+Otro ejemplo:
+
+```{r}
+# CODIGO DE R
+library(Matrix)
+N = 6
+
+set.seed(123)
+sparse_mat = sparseMatrix(
+  i = sample(N, N, replace = F),
+  j = sample(N, N, replace = F),
+  x = runif(N),
+  dims = c(N, N)
+)
+sparse_mat
+sparse_mat_py = r_to_py(sparse_mat)
+```
+
+```{python}
+# CODIGO DE PYTHON
+r.sparse_mat_py
+print(r.sparse_mat_py)
+
+# Para mandar una variable de python a R no es necesario convertirla en el bloque de Python, solo en el de R de la siguiente manera: 
+```
+
+```{r}
+# CODIGO DE R
+py_to_r(sparse_mat_py) # Y de esta manera traemos una variable de python que anteriormente fue exportada por R y asi logramos traerla con los cambios que le hayamos hecho en Python. Esta accion devuelve directamente la variable
+```
+
+

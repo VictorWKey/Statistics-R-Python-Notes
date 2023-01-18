@@ -1,0 +1,30 @@
+---
+title: "Chunks"
+author: "Victor Lopez"
+date: "2023-01-11"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Parametros
+
+```{r, echo = TRUE, eval = TRUE, message = FALSE, warning = FALSE, comment = NA , results = 'markup' }
+
+# echo => Mostrar el codigo que viene en el chunk
+# eval => Evaluar el codigo 
+# message => Mostrar mensajes que R produce al ejecutar codigo
+# warning => Mostrar mensajes de advertencia
+# comment => NA o TRUE. Mostrar o no los "##" que vienen al evaluar codigo
+# results => markup: linea a linea con "##"
+#            hide: no se muestra el resultado pero si lo evalua
+#            asis: nos devuelve el resultado en lineas de texto normal sin formato
+#            hold: muestra todos los resultados al final del bloque de codigo
+```
+
+## Codigo R en un parrafo
+
+La raiz cuadrado de 64 es `r sqrt(64)`

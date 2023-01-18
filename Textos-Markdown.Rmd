@@ -1,0 +1,51 @@
+---
+title: "Textos Markdown"
+author: "Victor Lopez"
+date: "2023-01-11"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+*cursiva* _cursiva_
+
+**negrita** __negrita__
+
+superindice^4^
+
+~~tachada~~
+
+--Y entonces Victor dijo
+
+--- Como Victor queria explicar
+
+[Mi perfil](http://udemy.com/u/juangabriel2)
+
+
+***
+
+Lista:
+
+* Carro
+    + Carro 2
+* Casa
+* Cama
+
+Lista ordenada:
+
+1. Piso
+2. Techo
+3. Camara
+1. Pantalla
+1. Cocina
+
+Tabla
+
+Alumno        |    Nota
+--------------|----------
+Juan Gabriel  | 8
+Victor Angel  | 10
+
+
