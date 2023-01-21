@@ -1,0 +1,36 @@
+---
+title: "Factores"
+author: "Victor Lopez"
+date: "2023-01-12"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Factores
+
+Es como un vector pero con una estructura que nos permite clasificar observaciones. Es como obtener los valores unicos de un vector. Tiene el atributo levels, el cual, son los valores unicos ordenados si es que son numeros. 
+
+Los Levels se definen automaticamente, pero si queremos agregar mas. Debemos agregar los que si existen y los que querramos agregar.
+
+```{r, eval = FALSE}
+nombres.factor = factor(vector)
+nombres.factor = as.factor(vector) # La diferencia es que con factor(), podemos pasar ciertos
+#parametros
+
+gender.fact = factor(gender, levels = c("M", "H", "B"), labels = c("Mujer", "Hombre", "Hermafrodita")) # labels lo que hara es remplazar los levels, por eso
+
+levels(gender.fact) # Obtenemos un vector con los levels de un factor. Y tambien los podemos
+#cambiar de la siguiente manera
+
+levels(gender.fact) = c("Femenino", "Masculino", "Hibrido")
+# Nota: Si cambiamos los levels y les ponemos el mismo nombre, se vuelven uno mismo
+
+# ordered() devuelve un factor con los levels ordenados 
+ordered(notas, labels = c("Sus", "Suf", "Not", "Exc"))
+
+
+```
+

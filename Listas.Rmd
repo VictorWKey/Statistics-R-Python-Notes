@@ -1,0 +1,27 @@
+---
+title: "Listas"
+author: "Victor Lopez"
+date: "2023-01-12"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# List
+
+Lista formada por diferentes objetos cada cual con su nombre, llamados componentes
+
+```{r, eval = FALSE}
+l = list(nombre = "Temperaturas", datos = v, media = mean(v), sumas = cumsum(v))
+
+l$datos # Asi accedemos a sus componentes
+l[[2]] # Asi tambien accedemos a sus componentes por posicion
+l[2] # Con un solo corchete obtendremos parte de la lista, en este caso, solo la segunda parte.
+#Osea una lista = list(datos = v)
+
+str(l) # Para conocer la estructura interna de una lista
+names(l) # Devuelve un vector con el nombre de cada uno de los componentes
+```
+
