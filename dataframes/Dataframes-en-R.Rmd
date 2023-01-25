@@ -1,0 +1,237 @@
+---
+title: "Dataframes en R"
+author: "Victor Lopez"
+date: "2023-01-14"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Conceptos
+
+1. Observacion: es cada una de las filas
+2. Variable: es cada una de las columnas
+
+
+# Dataframes por defecto
+
+```{r, eval = FALSE}
+data() # Ventana con los DF en la sesion actual de R
+data(package=.packages(all.available = TRUE)) # DF que vienen en los paquetes 
+```
+
+# Info de un DF
+
+```{r, eval = FALSE}
+head(df, n)
+tail(df, n)
+str(df) # Estructura
+names(df) # Nombres de las columnas y cambiar nombres
+
+rownames(df) # Mostrar y cambiar
+colnames(df)
+dimnames(df) # Lista con un vector de rownames y colnames
+nrow(df) # Numero filas
+ncol(df)
+dim(df) # Vector con numero de filas y columnas
+```
+
+# Obtener columnas o filas (Subdataframes)
+
+```{r, eval = FALSE}
+df$nombre_variable[4:10] # Devuelve un vector o un factor, dependiendo de como este definida 
+# la columna
+# Las variables son internas, no esta definidas en el enviroment de R
+df[4, 3] # Para traer filas y columnas. Exactamente igual que con las matrices
+df[df$Species == "setosa" & df$Sepal.Width > 4, ] # Trae las observaciones que cumplan eso y 
+#todas las columnas
+subset(iris, Species == "setosa", select = c(1, 4)) # select es que columnas mostrar
+```
+
+# Leer DF
+
+```{r, eval = FALSE}
+df = read.table("../data/etc/dataframe.dat", # O un link
+                # Si proviene de un https, usa textConnection(getURL("url)), W/ paquete RCurl
+                header = FALSE, # La primera fila sera el nombre de las columnas o no
+                col.names = c("nombre", "ancho", "altura"), # Asignar nombre a columnas
+                sep = "", # Separador de los datos
+                dec = ".", # Separador de decimales
+                stringsAsFactors = TRUE) # Las columnas en strings, se convierten en factores 
+
+# En vez de usar read.table() para archivos .dat, tambien podemos usar:
+
+read.csv()
+read.xls() | read.xlsx() # necesita el paquete xls o xlsx
+read.mtb() # minitab
+read.spss()
+```
+
+# Escribir DF
+
+```{r, eval = FALSE}
+write.table(df, file = "./carpeta/midataframe.csv", sep = ",", dec = ".")
+```
+
+# Crear DF
+
+```{r, eval = FALSE}
+Algebra = c(1, 2, 0, 5, 4)
+Analysis = c(3, 3, 2, 7, 9)
+Statistics = c(1, 2, 0, 5, 4)
+
+grades = data.frame(Alg = Algebra, An = Analysis, Stat = Statistics) # Nombre de columnas y datos
+row.names(grades) = c("P1, P2", "P3", "P4", "P5")
+```
+
+# Anadir filas y columnas
+
+```{r, eval = FALSE}
+# ANADIR FILA
+df[num_Fila, ] = c(...) # Si la fila seleccionada tiene antes otras sin datos, les pondra NA 
+df = rbind(df, c(...))
+
+# ANADIR COLUMNA
+Calculus = c(5, 3, 5, 1, 9)
+df = cbind(df, Calculus)
+
+df$Calculus = c(5, 3, 5, 1, 9)
+```
+
+# Cambiar tipo de datos 
+
+```{r, eval = FALSE}
+df$Calculus = as.character(df$Calculus)
+df$Calculus = as.integer(df$Calculus)
+df$Calculus = as.numeric(df$Calculus)
+```
+
+# Aplicar funciones a DF
+
+```{r, eval = FALSE}
+# SAPPLY
+sapply(subset(iris, select = 1:4, na.rm = TRUE), function(x){sqrt(sum(x))}) 
+# x es variable, la cual la funcion la opera como si fuera un vector
+# na.rm sirve para que el vector correspondiente a cada columna no devuelva NA en caso de un NA
+
+# AGGREGATE
+# Aplicar una funcion a variables de un DF, en funcion de los niveles de un factor
+aggregate(cbind(Sepal.Length, Petal.Length) ~ Species + Nombre, 
+          data = iris, 
+          FUN = mean, 
+          na.rm = TRUE) 
+# Nos devuelve un DF que calculo el promeadio de Sepal.Length, Petal.Length, en funcion de
+# Las combinaciones que hay entre los valores del factor Species y el factor Nombre
+# Podemos omitir el cbind(), si solo es una variable
+# Podemos omitir el "+", si solo es un factor
+
+```
+
+
+# Mas metodos de DF
+
+```{r, eval = FALSE}
+# Debido que al hacer un subdataframe, hereda la estructura del dataframe original
+sdf = droplevels(sdf) # Borras los niveles sobrantes de los factores heredados
+
+# Tidyverse
+sdf = select(iris, startsWith("Petal")) # Trae las columnas que cumplan con la condicion
+# Pueden ser ends_with("Petal"), contains("Petal)
+
+```
+
+# Variables globales
+
+```{r, eval = FALSE}
+# Estos son mas recomendables ejecutarlos en consola
+
+attach(df) # Para hacer que R entienda sus variables como globales y que las podamos usar por su
+# nombre, sin necesidad de añadir delante el nombre del data frame y el símbolo $
+
+# Si ya hubiera existido una variable definida con el mismo nombre que una variable del dat
+# frame al que aplicamos attach, hubiéramos obtenido un mensaje de error al ejecutar esta
+# función y no se hubiera reescrito la variable global original
+
+detach(df) # Para devolver la situación original, eliminando del entorno global las variables
+# del data frame
+
+# Example:
+attach(iris) # En el apartado de variables se me abrira un "directorio" de nombre iris que 
+# contendra las variables (que son vectores) del DF
+```
+
+# Ejercicios
+
+## Ejercicio 1
+
+```{r}
+df = read.csv("http://winterolympicsmedals.com/medals.csv")
+nrow(df)
+tail(df)
+```
+
+## Ejercicio 2
+
+```{r}
+df$Medal = as.factor(df$Medal)
+str(df)
+nrow(subset(df, Medal == "Bronze"))
+nrow(subset(df, Medal == "Gold"))
+nrow(subset(df, Medal == "Silver"))
+```
+
+## Ejercicio 3
+
+```{r}
+str(df)
+df$City = as.factor(df$City)
+length(levels(df$City))
+```
+
+## Ejercicio 4
+
+```{r}
+nrow(subset(df, Event.gender == "M"))
+nrow(subset(df, Event.gender == "W"))
+```
+## Ejercicio 5
+¿En qué año participaron más deportistas?
+
+```{r}
+years = unique(df$Year)
+years
+
+athletesInYear = function(year){
+  sum(df$Year == year)
+}
+
+atletas = sapply(years, athletesInYear)
+atletas
+
+years[which.max(atletas)]
+
+```
+
+## Ejercicio 6
+El campo NOC indica el país del ganador de la medalla. ¿Qué país puede presumir de haber ganado más medallas de oro en los juegos de invierno entre 1960 y 1996?
+```{r}
+df$NOC = as.character(df$NOC)
+head(df)
+sdf = df[df$Year >= 1960 & df$Year <= 1996 & df$Medal == "Gold",  ]
+
+countries = unique(sdf$NOC)
+countries
+
+medallasDeOro = function(country) {
+  sum(sdf$NOC == country)
+}
+
+res = sapply(countries, medallasDeOro)
+res
+
+countries[which.max(res)]
+```
+
