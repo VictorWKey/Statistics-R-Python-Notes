@@ -1,0 +1,241 @@
+---
+title: "Graficos con Datos Cualitativos"
+author: "Victor Lopez"
+date: "2023-01-18"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Diagrama de barras
+
+```{r}
+sexo = factor(sample(c("M", "H"), size = 100, replace = TRUE))
+res = factor(sample(c("si", "no"), size = 100, replace = TRUE))
+
+barplot(table(sexo), col = c("lightblue", "pink"), main = "Bar Plot") # Es necesario pasarle como # parametro una tabla, 
+
+# Al igual con las relativas
+barplot(prop.table(table(sexo)), col = c("lightblue", "pink"), main = "Bar Plot")
+
+# Horizontales
+barplot(prop.table(table(sexo)), col = c("lightblue", "pink"), main = "Bar Plot",
+        horiz = TRUE)
+
+# Diagrama de barras con tabla bidimensional
+barplot(table(res, sexo), beside = TRUE, legend.text = TRUE, 
+        names = c("Hombre", "Mujer"),
+        col = c("yellow", "lightblue")) 
+# El segundo parametro del table indicara quien ira en las categorias y la primera, la division
+# Sin el beside por defecto se apilan
+
+```
+
+# Diagrama por sectores
+
+```{r}
+res = factor(sample(c("si", "no"), size = 100, replace = TRUE))
+pie(table(res))
+```
+
+# Diagrama de mosaico
+
+```{r}
+# Con tablas bidimensionales
+sexo = factor(sample(c("M", "H"), size = 100, replace = TRUE))
+res = factor(sample(c("si", "no"), size = 100, replace = TRUE))
+plot(table(sexo, res)) # Para saber leerlo, hay que tomar en cuenta la longitud, ya sea de lo largo o lo ancho y lo que va primero en el table() define las columnas
+
+# Con tablas tridimensionales
+HEC <- HairEyeColor # table(Hair, Eye, Sex)
+plot(HEC, main = "Grafico de mosaico tridimensional", col = c("pink", "lightblue"))
+# Aqui lo que pasara es que el tercer parametro del table, pasara a dividir cada una de las columnas entre sus niveles. El color dividira la tercera variable, en este caso el sexo
+
+library(vcd)
+cotabplot(HairEyeColor) # Dibuja un diagrama de mosaico para cada nivel de la tercera variable
+
+```
+# Ejercicio Completo
+
+```{r}
+HEC <- HairEyeColor
+
+data = as.table(HEC[,,"Male"] + HEC[,,"Female"])
+
+dimnames(data) = list(
+  Cabello = c("Negro", "Cafe", "Rojo", "Rubio"),
+  Ojos = c("Cafes", "Azules", "Avellanos", "Verdes")
+)
+
+```
+
+```{r}
+plot(data, main = "HairEyeColor")
+```
+
+```{r}
+# Cantidad de individuos
+sum(data)
+```
+
+```{r}
+colSums(data)
+rowSums(data)
+
+round(prop.table(colSums(data)), 3)
+round(prop.table(rowSums(data)), 3)
+
+barplot(round(prop.table(colSums(data)), 3), main = "Ojos")
+barplot(round(prop.table(rowSums(data)), 3), main = "Cabello")
+
+```
+```{r}
+# Frecuencias relativas y globales
+
+global = prop.table(data)
+marginCabello = round(prop.table(data, margin = 1), 3)
+marginOjos = round(prop.table(data, margin = 2), 3)
+```
+```{r}
+marginCabello = round(prop.table(data, margin = 1), 3)
+marginOjos = round(prop.table(data, margin = 2), 3)
+
+barplot(marginCabello, beside = TRUE, legend.text = TRUE)
+barplot(t(marginOjos), beside = TRUE, legend.text = TRUE)
+```
+
+# Otro ejercicio completo
+
+## Pregunta 1
+
+Utiliza str() y head() para explorar la estructura, y con help(), mirar el significado de cada variable.
+
+```{r}
+library(MASS)
+birthwt
+
+str(birthwt)
+head(birthwt)
+help("birthwt")
+```
+
+## Pregunta 2
+
+Calcula una tabla de frecuencias relativas marginales de los pares raza de la madre y peso inferior a 2.5 kg
+o no, que permita ver si la raza de la madre influye en el peso del bebé.
+
+```{r}
+prop.table(table(birthwt$race, birthwt$low), margin = 1)
+```
+
+## Pregunta 3
+Dibuja un diagrama de mosaico de la tabla del ejercicio anterior.
+
+```{r}
+t = prop.table(table(birthwt$race, birthwt$low), margin = 1)
+colnames(t) = c("More than 2.5kg", "Less than 2.5kg")
+rownames(t) = c("White", "Black", "Other")
+
+plot(t, main = "Risk Factors Associatted with low Infant Birth Weight",
+     col = c("lightgreen", "lightblue"))
+```
+
+## Pregunta 4
+Dibuja un diagrama bidimensional de barras, con las barras organizadas en bloques, que permita visualizar la información de los ejercicios anteriores. Aprovecha para poner nombres adecuados a los bloques, colores a las barras y añadir una leyenda que explique qué representa cada barra.
+
+```{r}
+barplot(t, beside = TRUE, ylim = c(0, 1),
+        col = c("lightblue", "lightyellow", "lightgreen"), 
+        main = "birth weight less than 2.5 kg depending to race of mother", 
+        legend.text = rownames(t))
+
+
+```
+## Pregunta 5
+¿Se puede obtener alguna conclusión de la tabla y el diagrama de barras anterior? Argumenta tu respuesta.
+
+El porcentaje de que el bebe nazca pesando mas de 2.5kg es mayor, sin importar la raza de la madre
+
+
+## Pregunta 6
+Repite los cuatro ejercicios anteriores para los pares madre fumadora o no, peso inferior a 2.5 kg o no y para
+los pares madre hipertensa o no y peso inferior a 2.5 kg o no.
+
+```{r}
+birthwt$smoke = as.factor(birthwt$smoke)
+s = prop.table(table(birthwt$smoke, birthwt$low), margin = 1)
+colnames(s) = c("More than 2.5kg", "Less than 2.5kg")
+rownames(s) = c("Not smoke", "Smoke")
+
+plot(s, color = c("lightblue", "lightyellow"),
+     main = "Tabla del peso de un bebe segun si la mama fuma o no")
+
+barplot(s, beside = TRUE, legend.text = rownames(s), col = c("lightblue", "lightyellow"),
+        ylim = c(0, 1))
+
+# Hay un mayor porcentaje en el que bebe nace pesando mas de 2.5kg sin importar si la mama fuma
+# o no. Ademas, hay mayor porcentaje en el que los bebes nacen pesando menos de 2.5kg cuando la
+# mama es fumadora
+
+```
+```{r}
+birthwt$ht = as.factor(birthwt$ht)
+h = prop.table(table(birthwt$ht, birthwt$low), margin = 1)
+rownames(h) = c("Not hypertension", "Hypertension")
+colnames(h) = c("More than 2.5kg", "Less than 2.5kg") 
+
+plot(h, main = "Peso del bebe dependiendo de si la mama padece hipertension o no",
+     col = c("lightblue", "pink"))
+
+barplot(h, beside = TRUE, ylim = c(0, 1), legend.text = rownames(h),
+        col = c("pink", "red"))
+
+# Hay un mayor porcentaje de que el bebe nazca pesando mas de 2.5kg cuando la mama no tiene
+# hipertension. Mientras que hay mas porcentaje de que el bebe pese menos de 2.5kg cuando la
+# mama tiene hipertension
+```
+Pregunta 7
+Calcula una tabla de frecuencias relativas marginales de la terna raza de la madre, madre fumadora o no y
+peso inferior a 2.5 kg o no, que permita ver si la raza de la madre y su condición de fumadora o no fumadora
+influyen en el peso del bebé.
+
+```{r}
+rsl = prop.table(table(birthwt[c("race", "smoke", "low")]), margin = 1)
+rsl
+# Podria explicarlo como: tenemos que comparar el porcentaje que para cada raza, y para cada una
+# de ellas ver que tan probable que es que sea fumadora o no la madre. Entonces podriamos decir
+# que hay un 41% de que la madre sea Blanca y no fume, y que pese mas de 2.5kg. Tomando en
+# cuenta que el porcentaje sobrante pertenece a la misma comparacion pero de los que pesan menos
+# de 2.5kg
+
+```
+Pregunta 8
+Dibuja un diagrama de mosaico de la tabla del ejercicio anterior.
+
+```{r}
+birthwt$race = factor( 
+  birthwt$race,
+  levels = c(1, 2, 3),
+  labels = c("White", "Black", "Other")
+)
+
+birthwt$smoke = factor( 
+  birthwt$smoke,
+  levels = c(0, 1),
+  labels = c("No smoke", "Smoke")
+)
+
+birthwt$low = factor( 
+  birthwt$low,
+  levels = c(0, 1),
+  labels = c("More than 2.5kg", "Less than 2.5kg")
+)
+
+plot(rsl, col = c("lightblue", "pink"))
+
+# Solo imagina que la variable low podria ser claramente otro mosaic plot aparte, con columna
+# race y filas smoke
+```
+

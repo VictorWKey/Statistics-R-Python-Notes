@@ -1,0 +1,69 @@
+---
+title: "Untitled"
+author: "Victor Lopez"
+date: "2023-01-21"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# DATOS ORDINALES
+
+Se suelen trabajar con factores ordenados. Para crear una factor ordenado se utiliza:
+
+```{r}
+notas = ordered(c("S", "A", "N", "Ex", "S", "S", "Ex", "Ex", "N", "A", "A", "A", "A", "N", "S"),
+                levels = c("S", "A", "N", "Ex"))
+```
+
+Con los datos ordinales podemos hacer exactamente lo mismo que los cualitativos, lo unico que cambia, son las frecuencias absolutas y relativas acumuladas
+
+# Frecuencia absoluta acumulada (unidimensional)
+
+```{r}
+cumsum(table(notas))
+```
+
+# Frecuencia relativa acumulada (unidimensional)
+
+```{r}
+cumsum(prop.table(table(notas)))
+```
+
+# cumsum() en tablas multidimensionales
+```{r}
+tam = sample(c("Muy.corto", "Corto", "Normal", "Largo", "Muy.largo"), size = 100, replace = TRUE)
+zones = rep(c("A", "B", "C", "D"), c(30, 25, 35, 10))
+```
+
+
+```{r}
+jirafas = data.frame(zones, tam)
+
+t = prop.table(table(jirafas), margin = 1)
+
+t(apply(t, MARGIN = 1, FUN = cumsum))
+# Se le aplicara el cumsum() en las filas pero al resultado final de la tabla le hara un t().
+# Por eso nosotros le hacemos otro t() para regresarlo a su forma original
+
+barplot(apply(t, MARGIN = 1, FUN = cumsum), beside = TRUE)
+```
+
+# Convertir datos cuantitativos en factores ordinale
+
+```{r}
+crabs = read.table("../../data/datacrab.txt", header = TRUE)
+crabs = crabs[,-1] # Todas menos la primera columna
+str(crabs)
+
+intervalos = cut(crabs$width, breaks = c(21, 25, 29, 33, Inf), right = FALSE,
+                 labels = c("21-25", "25-29", "29-33", "33-...")) 
+# Creara un vector pero con los datos agrupados en intervalos, cada dato sera cambiado por el
+# valor del intervalo que le corresponde. Con rigth = FALSE, estamos diciendo que, es de 21 a 25
+# sin tomarse en cuenta el 25 y asi sucesivamente
+
+crabs$width.rank = ordered(intervalos)
+```
+

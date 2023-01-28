@@ -1,0 +1,183 @@
+---
+title: "Tablas de Datos Cualitativos"
+author: "Victor Lopez"
+date: "2023-01-17"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Vector de elementos random
+
+```{r}
+respuestas = factor( sample(c("si", "no"), size = 12, replace = TRUE) ) # El replace sirve para
+# sacar y volver a meter lo obtenido de manera random. sample() devuelve un factor
+```
+
+# Tabla de frecuencias absolutas (Unidimensionales)
+
+```{r, eval = FALSE}
+tabla = table(respuestas) # Tabla de frecuencias de un vector o un factor
+names(tabla) # Niveles de la tabla de frecuencias
+
+# Podemos añadir names a la hora de crear el factor:
+x = factor( sample(c("si", "no"), size = 12, replace = TRUE), levels = c("si", "no", "tal vez") )
+
+# Acceder a sus columnas (Devuelven otra tabla con la parte seleccionada):
+tabla[3] # Columna 3
+tabla["tal vez"] # La misma columna. Si no existen, devuelven NA
+
+# Las frecuencias las podemos tratar como si fuese un vector para operaciones:
+3 * tabla
+
+# which
+names(which(tabla == n)) # Obtenemos el nivel donde la frecuencia absoluta es n
+names(which(tabla == max(tabla))) # Moda
+mode = function(factor){ names(which(table(factor) == max(table(factor))))} # Moda de un factor
+
+
+
+```
+
+# Tabla de frecuencias relativas (Unidimensionales)
+
+```{r, eval = FALSE}
+
+# Unidimensional
+prop.table(tabla) == tabla / length(suFactor) # Se le aplica a una tabla de frecuencias 
+# absolutas ya creada
+```
+
+# Tablas de frecuencias absolutas (bidimensionales)
+
+```{r, eval = FALSE}
+sexo = c("H", "M", "H", "H", "M")
+respuestas = ("si", "no", "si", "no", "no")
+
+tablaBi = tables(sexo, respuestas) # La primera sera la fila y la segunda la columna. Podriamos hacer t()
+
+# Acceder a las entradas (igual que en matrices)
+tablaBi[1, 2] == tabla["H", "no"]
+
+colSums(tablaBi)
+rowSums(tablaBi)
+
+apply(tablaBi, FUN = sum, MARGIN = 1) # Sum toma como parametro vectores (Filas)
+apply(tablaBi, FUN = sum, MARGIN = 2)
+apply(tablaBi, FUN = sqrt, MARGIN = c(1, 2)) # A cada elemento
+```
+
+
+# Tablas de frecuencias relativas (bidimensionales)
+
+```{r, eval = FALSE}
+# Frecuencias relativas globales
+prop.table(tablaBi) 
+
+# Frecuencias relativas marginales
+prop.table(tablaBi, margin = 1) # Lo haremos con base al sexo
+prop.table(tablaBi, margin = 1) # Lo haremos con base a las respuestas
+# El margin depende de como hayamos puesto las variables al crear la table
+# O tambien podriamos interpretarlo como, calcular la fr de cada uno de los niveles de la
+# variable seleccionada por el margin, las cuales estan representadas o divididas por los niveles
+# de la otra variable
+
+# Funcion CrossTable() del paquete gmodels
+# Hace un resumen de la fa, fr global y las dos fr marginales en tablas bidimensionales
+library(gmodels)
+CrossTable(sexos, respuestas, prop.chisq = FALSE)
+
+colSums(prop.table(tablaBi))
+rowSums(prop.table(tablaBi))
+
+apply(prop.table(tablaBi), FUN = sum, MARGIN = 1) # Sum toma como parametro vectores (Filas)
+apply(prop.table(tablaBi), FUN = sum, MARGIN = 2)
+apply(prop.table(tablaBi), FUN = sqrt, MARGIN = c(1, 2)) # A cada elemento
+```
+
+# Tablas de frecuencias absolutas y relativas (Multidimensionales)
+
+```{r}
+# FRECUENCIAS ABSOLUTAS
+
+ans = sample( c("Si", "No"), size = 100, replace = TRUE )
+sex = sample( c("H", "M"), size = 100, replace = TRUE )
+place = sample( c("San Francisco", "Barcelona", "Valencia", "Cobija"), size = 100, replace = TRUE)
+
+tablaMulti = table(sex, ans, place) # Fila: sex, columna: ans, tablas organizadas con base al
+# place
+
+# ftable()
+# Al paser 3 variables a table, si en vez de usar table, usamos ftable(), lo que hara no es
+# dividir en tablas la tercer variable, lo que hara es poner el sex y ans como filas y el place
+# como columnas
+ftable(sex, ans, place)
+ftable(sex, ans, place, col.vars = c("sex", "ans")) # Podemos elegir las columnas, las demas
+# seran filas. En el orden que la pongamos, sera de arriba hacia abajo
+
+# Filtrar
+tablaMulti["M", "Si", "San Francisco"]
+tablaMulti[ , "Si", "Valencia"]
+tablaMulti[ , "No", ]
+tablaMulti["M", , "Cobija"]
+
+# FRECUENCIAS RELATIVAS
+
+prop.table(tablaMulti) # Frecuencias globales
+prop.table(tablaMulti, margin = 3) # Calcularemos las frecuencias relativas de los datos dentro
+# de cada place
+
+prop.table(tablaMulti, margin = 1) # Calcularemos las frecuencias relativas de los datos para
+# cada sexo, incluyendo todos los datos de todos los paises
+
+prop.table(tablaMulti, margin = c(1, 3)) # Lo mismo que lo anterior, pero para cada pais
+# individualmente
+
+# Podriamos hacer el mismo uso de ftable():
+ftable(prop.table(tablaMulti, margin = 1))
+
+```
+
+# Tabla de fa HairEyeColor
+
+```{r, eval = FALSE}
+HairEyeColor # Por defecto viene ordenada como table(Hair, Eye, Sex)
+sum(HairEyeColor) # Total de datos
+
+# Permutar una tabla ya creada:
+aperm(HairEyeColor, perm = c("Sex", "Hair", "Eye"))
+
+library(kableExtra)
+kable(HairEyeColor) # Muestra la tabla como si fuera un dataframe
+
+library(xtable)
+xtable(table(sex, ans)) # Imprime una tabla con LaTeX, para poder presentarla correctamente
+# tendriamos que utilizar el parametro results = "asis" al chunk
+```
+
+# Tablas con dataframes
+
+```{r}
+Beb_Energ = read.table("../../data/EnergyDrink")
+
+# Para un df con variables cualitativas, podemos hacer un resumen de sus frecuencias absolutas:
+summary(Beb_Energ)
+
+# Tablas de cada variable
+apply(Beb_Energ, MARGIN = 2, FUN = table ) # Se convierte en una lista con las tablas de cada v
+# Lo anterior equivaldria a:
+table(Beb_Energ$sexo)
+
+# Si hacemos un table() del dataframe, devuelve la table con las variables como parametros en el
+# mismo orden en que estan en el df
+
+# No necesariamente debemos seleccionar todas las columnas, asi que:
+
+table(Beb_Energ[c(1, 3)]) # Solo seleccionamos estudio y sexo
+
+# Es lo mismo con:
+ftable(Beb_Energ) # Sin necesidad de convertirlo a table() o prop.table()
+```
+
