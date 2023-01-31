@@ -1,0 +1,141 @@
+---
+title: "Diagrama de caja y bigotes"
+author: "Victor Lopez"
+date: "2023-01-24"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Diagrama de caja
+
+Representa el min, 1er cuartil, mediana, 3er cuartil, el mas y los outlieres
+
+$$bigoteinferior = Q_{0.25} - 1.5 \cdot (Q_{0.75} - Q_{0.25})$$
+$$bigotesuperior = Q_{0.75} + 1.5 \cdot (Q_{0.75} - Q_{0.25})$$
+
+En pocas palabras los bigotes estan a 1.5 veces mas de distancia que el rango intercuartilico. Los cuales marcan los valores maximos y minimos, a no ser que haya datos muy alejados de la caja intercuartilica
+
+# Graficar
+
+```{r, eval = FALSE}
+boxplot(vector, vector2, vector3) # Cada vector es un boxplot
+
+boxplot(dataframe, names=  c("nombre1", "nombre2")) # Crea un boxplot de cada variable, incluyendo variables cualitativas. Le das el nombre a cada variable
+```
+
+
+```{r}
+# Graficar variable agrupada en niveles de otra variable, es decir, un boxplot por cada nivel
+boxplot(iris$Sepal.Length~iris$Species, notch = TRUE)
+# El parametro notch añade una muesca en la mediana de la caja. Nos sirven para ver si las
+# medianas de dos boxplots se solapan o no y ver si las medianas son o no diferentes
+```
+
+
+```{r}
+boxplot(Sepal.Width~Species, data = iris, ylab = "Anchura del petalo")
+medias <- aggregate(Sepal.Width~Species, data = iris, mean)
+points(x=medias$Species, y=medias$Sepal.Width, col = "pink", pch = 15)
+# En el pdf si lo pinta bien
+```
+
+```{r}
+str(boxplot(Sepal.Width~Species, data = iris, ylab = "Anchura del petalo"))
+
+# stats nos devuelve binf, Q0.25, mediana, Q0.75, bsup y por lo tanto van de 5 en 5
+# n indica la cantidad de observaciones utilizadas para cada boxplot
+# out nos devuelve los valores atipicos en caso de haber diversos diagramas en un plot
+# group nos indica a que diagramas pertenecen esos outliers
+
+boxplot(Sepal.Width~Species, data = iris, ylab = "Anchura del petalo")$stats
+
+aggregate(Sepal.Width~Species, data = iris, FUN = sd)
+```
+# Ejercicios 
+
+## Ejercicio 1
+
+Calcula la media, la mediana y la moda redondeada a dos cifras decimales de las notas numéricas de los exámenes tanto de forma conjunta como por estudio universitario. ¿En qué grupo observamos la nota más alta? ¿Qué grupo está por encima de la media de estudiantes?
+
+```{r}
+grades = read.table("../../data/grades.txt")
+
+mod = function(col){
+  round(as.numeric(names(which(table(col) == max(table(col)))))[[1]], 2)
+}
+
+round(median(grades$nota), 2)
+round(mean(grades$nota, na.rm = TRUE), 2)
+round(mod(grades$nota))
+
+aggregate(nota ~ estudio, data = grades, 
+          FUN = function(col){round(median(col, na.rm = TRUE), 2)})
+aggregate(nota ~ estudio, data = grades, 
+          FUN = function(col){round(mean(col, na.rm = TRUE), 2)})
+aggregate(nota ~ estudio, data = grades, 
+          FUN = mod)
+aggregate(nota ~ estudio, data = grades, 
+          FUN = function(col){round(max(col, na.rm = TRUE),3)})
+# La fun itera sobre las columnas
+# Recuerda que es mejor usar aggregate que by()
+
+# En industrial observamos la nota mas alta: 10.025
+# Mates e Informatica esta por encima de la media de estudiantes
+
+```
+
+## Ejercicio 2
+
+```{r}
+aggregate(nota ~ estudio, data = grades, FUN = sd)
+aggregate(nota ~ estudio, data = grades, FUN = var)
+
+# En el de Mates, ya que es el que tiene una mayor varianza y desviacion estandar
+```
+
+## Ejercicio 3
+¿Hay mucha diferencia entre el grupo que has respondido en el ejercicio 1 y en el ejercicio 2? Intenta dar una explicación objetiva del suceso.
+
+```{r}
+# Industrial tiene un promedio maximo de 10, mientras que mates tiene un promedio maximo de 8.54, y tambien, mates tiene una media de 4.22, mientra que industrial tiene una media de 3.58. Lo cual quiere decir que en los examenes, les fue mejor a los de Mates. La varianza entre el grupo de Mates e Industrial solo tiene una pequeña diferencia.
+```
+
+## Ejercicio 4
+Dibuja en un único gráfico los cuatro diagramas de caja, uno para cada grupo. Añade también la nota media, pon nombre, título y color al gráfico para documentarlo correctamente.
+
+```{r}
+boxplot(grades$nota ~ grades$estudio, 
+        notch = TRUE,
+        main = "Notas por carrera", 
+        col = c("pink", "lightblue", "lightyellow", "lightgreen"),
+        xlab = "Carreras",
+        ylab = "Notas")
+medias = aggregate(nota ~ estudio, data = grades, 
+          FUN = function(col){round(mean(col, na.rm = TRUE), 2)})
+points(medias, pch = 15, col = "red")
+```
+
+## Ejercicio 5
+¿Observas algunos valores atípicos en el boxplot anterior? ¿A qué grupo pertence?
+
+```{r}
+# Si, 1 en el grupo de Industrial, 1 en el de informatica, 1 en el de Telematica
+```
+
+## Ejercicio 6
+## Indica a partir del boxplot anterior en qué grupo observamos más variedad de notas.
+
+```{r}
+# En el grupo de mates, ya que en el rango intercuartilo es mas grandes y tambien sus bigotes son mas largos que los de los otros
+```
+
+## Ejercicio 7
+En base a todo lo anterior, ¿puedes afirmar de forma estadística que el examen de carrera ha ido mejor en algún estudio que en los demás?
+
+```{r}
+# Si, le fue mejor en el examen de carrera al grupo de Mates, ya que fue el que tuvo la mediana y media mas alta, si bien tuvo una variacion mas alta que los demas grupos. Pero en general fue al que mejor le fue en el examen de carrera.
+```
+

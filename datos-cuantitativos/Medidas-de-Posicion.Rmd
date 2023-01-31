@@ -1,0 +1,41 @@
+---
+title: "Medidas de posicion"
+author: "Victor Lopez"
+date: "2023-01-21"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Cuantil de orden p $Q_p$
+
+Si ordenamos datos de menor a mayor, entonces $Q_p$ sera el numero mas pequeño que deja a su izquierda (incluyendose a si mismo). 
+
+La mediana es igual que $Q_{0.5}$
+
+Si de una tabla de frecuencias, nos piden el cuantil cuantirl $Q_{0.3}$, sabemos que este es el primer elemento de la lista cuya frecuencia relativa acumulada es mayor o igual a 0.3.
+
+Los cuartiles van de 0.25 en 0.25
+
+Los deciles van de 0.1 en 0.1
+
+Los percentiles van de 0.01 en 0.01
+
+# Cuantiles en R
+
+```{r}
+vectorOrdenado = sort(sample(c(1:6), 50, replace = TRUE))
+
+vectorOrdenado
+
+quartil = quantile(vectorOrdenado, 0.25) # Primer cuartil. Esto quiere decir que el dato que se devuelve, tiene por debajo suyo, el 25% de los datos
+               
+quartil  
+
+# Recuerda que para obtener un cuantil, los datos deben estar ordenados, para que de esta forma los datos debajo de un cuartil, sean iguales o menores a ese cuantil
+```
+
