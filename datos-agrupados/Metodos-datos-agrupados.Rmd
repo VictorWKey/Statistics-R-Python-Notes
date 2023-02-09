@@ -1,0 +1,119 @@
+---
+title: "Funciones utiles para datos agrupados"
+author: "Victor Lopez"
+date: "2023-01-28"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Datos agrupados de ejemplo
+
+```{r}
+crabs = read.table("../../data/datacrab.txt", header = TRUE)
+cw = cut(crabs$width, 
+    breaks =  c(20.95, 22.5, 23.55, 24.85, 26.15, 27.45, 28.75, 30.05, 31.35, 32.65, 33.95), 
+    right = FALSE)
+```
+
+
+# Funcion cut
+
+Agrupa vectores en clases
+
+```{r, eval = FALSE}
+cut(datos, 
+    breaks = c(12, 14, 16, 18, 20), 
+    labels = c("Doce", "Catorce", "Dieciseis", "Diesiocho", "Veinte"),
+    right = FALSE,
+    include.lowest = TRUE)
+
+# breaks puede ser un vector formado por los extremos de los intervalos o puede ser un numero k
+# de clases. Para este ultimo caso, R divide el intervalo comprendido entre los valores minimos
+# y maximos de x en k intervalos y, a continuacion, desplaza ligeramente el extremo inferior del
+# primer intervalos a la izquierda y el ultimo a la derecha. Es algo extraño que hace R, lo cual
+# es mejor recomendado poner el vector de los extremos.
+
+# labels = FALSE, pone como labels 1, 2, 3, 4... hasta n cantidad de intervalos a los intervalos
+
+# right = FALSE hace que los intervalos sean cerrados por la izquierda y abiertos por la derecha
+
+# include.lowest sirve para indicar si el ultimo intervalo sera cerrado o no
+```
+
+# Tablas de frecuencias con datos agrupados
+
+Podemos hacerlo con table, prop.table y cumsum.
+Tambien podemos hacerlo con la funcion hist() de la siguiente manera:
+
+```{r}
+crabs = read.table("../../data/datacrab.txt", header = TRUE)
+
+hist(crabs$width, breaks = 3, right = FALSE, plot = FALSE)$counts
+# Devuelve un vector con las fecuencias absolutas de cada intervalos
+# Aunque conviene mas igualar el parametro breaks al vector de los extremos del intervalo debido
+# que cut y hist hacen uso de diferentes metodos para agrupar los datos cuando se especifica
+# solamente el numero k de clases
+
+hist(crabs$width, breaks = 3, right = FALSE, plot = FALSE)$counts
+# Devuelve las marcas de clase
+```
+# Dos funciones para calcular tablas de frecuencias 
+La primera sirve en el caso en que vayamos a tomar todas las clases de la misma amplitud. Sus parámetros son: 
+x, el vector con los datos cuantitativos; 
+k, el número de clases; 
+A, su amplitud; 
+p, la precisión de los datos (p = 1 si la precisión son unidades, p = 0.1 si la precisión son décimas de unidad…).
+
+```{r}
+# La primera sirve en el caso en que vayamos a tomar todas las clases de la misma amplitud. Sus 
+# parámetros son: 
+# x, el vector con los datos cuantitativos; 
+# k, el número de clases; 
+# A, su amplitud; 
+# p, la precisión de los datos (p = 1 si la precisión son unidades, p = 0.1 si la precisión son
+# décimas de unidad…).
+
+TablaFrecs = function(x,k,A,p){ 
+  L = min(x)-p/2+A*(0:k)
+  x_cut = cut(x, breaks = L, right=FALSE)
+  intervals = levels(x_cut)
+  mc = (L[1]+L[2])/2+A*(0:(k-1))
+  Fr.abs = as.vector(table(x_cut)) 
+  Fr.rel = round(Fr.abs/length(x),4) 
+  Fr.cum.abs = cumsum(Fr.abs) 
+  Fr.cum.rel = cumsum(Fr.rel)
+  tabla = data.frame(intervals, mc, Fr.abs, Fr.cum.abs, Fr.rel, Fr.cum.rel)
+  tabla
+}
+
+TablaFrecs(crabs$width, 10, 1.3, 0.1)
+
+# La segunda es para cuando conocemos los extremos de las clases. Sus parámetros son: 
+# x, el vector con los datos cuantitativos; 
+# L, el vector de extremos de clases; 
+# V, un valor lógico, que ha de ser TRUE si queremos que el último intervalo sea cerrado, y 
+# FALSE en caso contrario.
+
+TablaFrecs.L = function(x,L,V){
+  x_cut = cut(x, breaks=L, right=FALSE, include.lowest=V, diag.lab = 5)
+  intervals = levels(x_cut)
+  mc = (L[1:(length(L)-1)]+L[2:length(L)])/2
+  Fr.abs = as.vector(table(x_cut)) 
+  Fr.rel = round(Fr.abs/length(x),4)
+  Fr.cum.abs = cumsum(Fr.abs)
+  Fr.cum.rel = cumsum(Fr.rel)
+  tabla = data.frame(intervals, mc, Fr.abs, Fr.cum.abs, Fr.rel, Fr.cum.rel)
+  tabla
+}
+
+TablaFrecs.L(crabs$width, c(20.95, 22.25, 23.55, 24.85, 26.15, 27.45, 28.75, 30.05, 31.35, 32.65, 33.95), FALSE)
+
+# Si te das cuenta, la funcion cut, parece que pierde precision a la hora de generar los levels,
+# pero no es asi, los intervalos en si siguen estando precisos, pero las etiquetas al cortar los
+# datos con cut() se truncan
+```
+
+
