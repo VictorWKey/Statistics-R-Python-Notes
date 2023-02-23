@@ -1,0 +1,126 @@
+---
+title: "Distribucion Uniforme"
+author: "Victor Lopez"
+date: "2023-02-23"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Variable aleatoria continua
+
+Toda variable aleatoria $X$ con función de distribución 
+
+$$F(x)=\int_{-\infty}^{x}f(t)dt\ \forall x\in\mathbb{R}$$ para cualquier densidad $f$ es una v.a. continua
+
+Diremos entonces que $f$ es la función de densidad de $X$
+
+A partir de ahora, considerareos solamente las v.a. $X$ continuas que tienen función de densidad
+
+## Esperanza
+
+<l class = "definition">Esperanza de una v.a. continua.</l> Sea $X$ v.a. continua con densidad $f_X$. La esperanza de $X$ es $$E(X)=\int_{-\infty}^{+\infty}x\cdot f_X(x)dx$$
+
+Si el dominio $D_X$ de $X$ es un intervalo de extremos $a<b$, entonces $$E(X)=\int_a^b x\cdot f_X(x)dx$$
+
+## Esperanza
+
+Sea $g:D_X\longrightarrow \mathbb{R}$ una función continua. Entonces, 
+
+$$E(g(X)) = \int_{-\infty}^{+\infty}g(x)\cdot f_X(x)dx$$
+
+Si el dominio $D_X$ de $X$ es un intervalo de extremos $a<b$, entonces $$E(g(X))=\int_a^b g(x)\cdot f_X(x)dx$$
+
+## Varianza
+
+<l class = "definition">Varianza de una v.a. continua.</l> Como en el caso discreto, $$Var(X)=E((X-E(X))^2)$$
+
+y se puede demostrar que
+
+$$Var(X)=E(X^2)-(E(X))^2$$
+
+## Desviación típica
+
+<l class = "definition">Desviación típica de una v.a. continua.</l> Como en el caso discreto, $$\sigma = \sqrt{Var(X)}$$
+
+# Distribucion Uniforme
+
+## Esperanza
+
+<l class = "definition">Esperanza de una v.a. continua.</l> Sea $X$ v.a. continua con densidad $f_X$. La esperanza de $X$ es $$E(X)=\int_{-\infty}^{+\infty}x\cdot f_X(x)dx$$
+
+Si el dominio $D_X$ de $X$ es un intervalo de extremos $a<b$, entonces $$E(X)=\int_a^b x\cdot f_X(x)dx$$
+
+## Esperanza
+
+Sea $g:D_X\longrightarrow \mathbb{R}$ una función continua. Entonces, 
+
+$$E(g(X)) = \int_{-\infty}^{+\infty}g(x)\cdot f_X(x)dx$$
+
+Si el dominio $D_X$ de $X$ es un intervalo de extremos $a<b$, entonces $$E(g(X))=\int_a^b g(x)\cdot f_X(x)dx$$
+
+## Varianza
+
+<l class = "definition">Varianza de una v.a. continua.</l> Como en el caso discreto, $$Var(X)=E((X-E(X))^2)$$
+
+y se puede demostrar que
+
+$$Var(X)=E(X^2)-(E(X))^2$$
+
+## Desviación típica
+
+<l class = "definition">Desviación típica de una v.a. continua.</l> Como en el caso discreto, $$\sigma = \sqrt{Var(X)}$$
+
+- **Esperanza** $E(X) = \frac{a+b}{2}$
+- **Varianza** $Var(X) = \frac{(b-a)^2}{12}$
+
+## Distribución Uniforme
+
+El código de la distribución Uniforme:
+
+- En `R` tenemos las funciones del paquete `stats`: `dunif(x, min, max), punif(q, min, max), qunif(p, min, max), runif(n,  min, max)` donde `min` y `max` són los extremos de los intervalos de la distribución uniforme.
+- En `Python` tenemos las funciones del paquete `scipy.stats.uniform`: `pdf(k,loc, scale), cdf(k,loc, scale), ppf(q,loc, scale), rvs(n,loc, scaler)` donde la distribución uniforme está definida en el intervalo `[loc, loc+scale]`.
+
+## En R
+
+```{r}
+a = 0
+b = 1
+
+x = seq(-0.1, 1.1, 0.1)
+
+plot(x, dunif(x, min = a, max = b))
+plot(x, punif(x, a, b), type = "l")
+
+hist(runif(100000, a, b))
+```
+
+## En Python
+
+```{python}
+from scipy.stats import uniform
+import matplotlib.pyplot as plt
+import numpy as np
+
+a = 0
+b = 1
+
+loc = a
+scale = b - a
+
+rv = uniform(loc = loc, scale = scale) # Recuerda que en Python no pide b tal cual
+
+mean, var, skew, kurt = rv.stats(moments = "mvsk")
+print(mean, var, skew, kurt)
+
+fig, ax = plt.subplots(1,1)
+x = np.linspace(-0.1, 1.1, 120)
+ax.plot(x, rv.pdf(x), "k-", lw = 2)
+ax.hist(rv.rvs(size = 1000000), density = True)
+plt.show()
+```
+
+
+

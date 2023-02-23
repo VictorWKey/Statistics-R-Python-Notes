@@ -1,0 +1,73 @@
+---
+title: "Distribucion de Poisson"
+author: "Victor Lopez"
+date: "2023-02-22"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Distribución de Poisson
+
+Si $X$ es variable aleatoria que mide el "número de eventos en un cierto intervalo de tiempo", diremos que $X$ se distribuye como una Poisson con parámetro $\lambda$
+
+$$X\sim \text{Po}(\lambda)$$
+donde $\lambda$ representa el número de veces que se espera que ocurra el evento durante un intervalo dado
+
+- El **dominio** de $X$ será $D_X = \{0,1,2,\dots\}$
+
+- La **función de probabilidad** vendrá dada por $$f(k) = \frac{e^{-\lambda}\lambda^k}{k!}$$
+
+## Distribución de Poisson
+ 
+- La **función de distribución** vendrá dada por $$F(x) = \left\{
+\begin{array}{cl}
+     0 & \text{si } x<0 
+  \\ \sum_{k=0}^xf(k) & \text{si } 0\le x<n
+  \\ 1 & \text{si } x\ge n
+\end{array}
+\right.$$ 
+- **Esperanza** $E(X) = \lambda$
+- **Varianza** $Var(X) = \lambda$
+
+El código de la distribución de Poisson:
+
+- En `R` tenemos las funciones del paquete `Rlab`: `dpois(x, lambda), ppois(q,lambda), qpois(p,lambda), rpois(n, lambda)` donde `lambda` es el número esperado de eventos por unidad de tiempo de la distribución.
+- En `Python` tenemos las funciones del paquete `scipy.stats.poisson`: `pmf(k,mu), cdf(k,mu), ppf(q,mu), rvs(M,mu)` donde `mu` es el número esperado de eventos por unidad de tiempo de la distribución.
+
+# En R
+
+Supongamos que $X$ modela el numero de errores por pagina que tiene un valor esperado $\lambda = 5$
+
+```{r}
+l = 5
+
+plot(0:20, dpois(x = 0:20, lambda = l))
+ppois(0:20, l)
+qpois(0.5, 5) # Hay un 50% de que haya el valor dado o menos errores
+rpois(1000, lambda = l) -> data
+hist(data)
+
+```
+
+# En Python
+
+Tenemos un total de 8 errores por cada 10 paginas, osea 0.8 errores por pagina
+
+```{python}
+import numpy as np
+from scipy.stats import poisson
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(1, 1)
+mu = 0.8
+
+mean, var, skew, kurt = poisson.stats(mu, moments = "mvsk")
+x = np.arange(0, 5)
+ax.plot(x, poisson.pmf(x, mu), "bo", ms = 8, label = "Poisson (0.8)")
+plt.show()
+```
+
+

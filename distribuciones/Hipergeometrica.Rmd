@@ -1,0 +1,75 @@
+---
+title: "Distribucion hipergeometrica"
+author: "Victor Lopez"
+date: "2023-02-22"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Distribución Hipergeométrica
+
+Consideremos el experimento "extraer a la vez (o una detrás de otra, sin retornarlos) $n$ objetos donde hay $N$ de tipo A y $M$ de tipo B". Si $X$ es variable aleatoria que mide el "número de objetos del tipo A", diremos que $X$ se distribuye como una Hipergeométrica con parámetros $N,M,n$
+$$X\sim \text{H}(N,M,n)$$
+
+- El **dominio** de $X$ será $D_X = \{0,1,2,\dots,N\}$ (en general)
+- La **función de probabilidad** vendrá dada por $$f(k) = \frac{{\binom{N}{K}}{\binom{M}{n - k}}}{\binom{N + M}{n}}$$
+- La **función de distribución** vendrá dada por $$F(x) = \left\{
+\begin{array}{cl}
+     0 & \text{si } x<0 
+  \\ \sum_{k=0}^xf(k) & \text{si } 0\le x<n
+  \\ 1 & \text{si } x\ge n
+\end{array}
+\right.$$
+
+- **Esperanza** $E(X) = \frac{nN}{N+M}$ 
+- **Varianza** $Var(X) = \frac{nNM}{(N+M)^2}\cdot\frac{N+M-n}{N+M-1}$
+
+El código de la distribución Hipergeométrica:
+
+- En `R` tenemos las funciones del paquete `Rlab`: `dhyper(x, m, n, k), phyper(q,  m, n, k), qhyper(p,  m, n, k), rhyper(nn,  m, n, k)` donde `m` es el número de objetos del primer tipo, `n` el número de objetos del segundo tipo y `k` el número de extracciones realizadas.
+- En `Python` tenemos las funciones del paquete `scipy.stats.hypergeom`: `pmf(k,M, n, N), cdf(k,M, n, N), ppf(q,M, n, N), rvs(M, n, N, size)` donde `M` es el número total de datos en la poblacion, `N` es el numero de extracciones realizadas y `n` el número de datos del primer tipo (el que queremos).
+
+## En R
+
+Supongamos que tenemos 20 animales, de los cuales 7 son perros. Queremos medir la probabilidad de encontrar un numero determinado de perros si elegimos x = 12 animales al azar
+
+```{r}
+library(Rlab)
+M = 7
+N = 13
+k = 12
+dhyper(x = 0:12, m = M, n = N, k = k)
+phyper(q = 0:12, m = M, n = N, k = k)
+qhyper(p = 0.5, m = M, n = N, k = k) # Quiere decir que hay un 50% de que tenga la
+# cantidad devuelta o menos
+rhyper(nn = 1000, m = M, n = N, k = k) -> data
+hist(data, breaks = 8)
+```
+
+
+## En Python
+
+```{python}
+from scipy.stats import hypergeom
+import matplotlib.pyplot as plt
+import numpy as np
+
+M, n, N = 20, 7, 12
+
+rv = hypergeom(M, n, N)
+x = np.arange(0, n+1)
+y = rv.pmf(x)
+
+mean, var, skew, kurt = rv.stats(moments = "mvsk")
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.plot(x, y, "bo")
+
+
+
+```
+

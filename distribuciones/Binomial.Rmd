@@ -83,3 +83,5 @@ ax.hist(binom.rvs(n, p, size = 10000), bins = 7)
 plt.show()
 ```
 
+
+
